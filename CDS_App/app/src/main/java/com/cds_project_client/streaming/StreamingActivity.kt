@@ -9,14 +9,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.cds_project_client.R
 import com.cds_project_client.data.ItemChatting
+import com.cds_project_client.util.CMClient
 import kotlinx.android.synthetic.main.activity_streaming.*
 
 class StreamingActivity : AppCompatActivity() {
 
+    var is_full = false
+    var streaming_mode = 0
+    lateinit var cmClient:CMClient
     lateinit var chat_list: ArrayList<ItemChatting>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_streaming)
+        streaming_mode = intent.getIntExtra("streaming_mode", 0)
         init()
     }
 
@@ -32,10 +37,15 @@ class StreamingActivity : AppCompatActivity() {
 
     }
 
+    fun setFullScreen(is_full:Boolean){
+//        var params = LayoutPa
+
+    }
 
     private fun init(){
-        chat_list = ArrayList()
+        cmClient = CMClient(this)
 
+        chat_list = ArrayList()
         getData()
 
         // Chatting Init
@@ -46,9 +56,23 @@ class StreamingActivity : AppCompatActivity() {
 
         // Send Message
         send_message.setOnClickListener {
-
+            var strTarget = "/g"
+            var strMsg = input_chatting.text.toString()
+            cmClient.cmClientStub.chat(strTarget, strMsg)
+            input_chatting.text.clear()
         }
 
+        if(streaming_mode == 0){
+            getVideo()
+        } else {
+            startStreaming()
+        }
+    }
+    fun startStreaming(){
+
+    }
+
+    fun getVideo(){
         // Test Video
         var url = "http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4"
         streaming_view.setVideoPath(url)
@@ -67,4 +91,5 @@ class StreamingActivity : AppCompatActivity() {
         ///////////////////////////////////////////////
 
     }
+
 }

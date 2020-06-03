@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.cds_project_client">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,7 +15,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         >
-        <activity android:name=".streaming.StreamingActivity" />
+        <activity android:name=".streaming.StreamingActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            />
 
         <activity android:name=".login.SignUpActivity" />
         <activity android:name=".login.LoginActivity">

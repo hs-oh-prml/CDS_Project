@@ -3,6 +3,7 @@ package com.cds_project_client
 import android.content.Context
 import android.content.Intent
 import android.text.Layout
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.cds_project_client.data.ItemStreaming
 import com.cds_project_client.streaming.StreamingActivity
+import com.cds_project_client.util.CMClient
 
 class StreamerListAdapter(
     var context: Context,
-    var itemList:ArrayList<ItemStreaming>
+    var itemList:ArrayList<ItemStreaming>,
+    var cmClient:CMClient
 ):RecyclerView.Adapter<StreamerListAdapter.ViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,8 +38,15 @@ class StreamerListAdapter(
             ///////////////////////////////////////////////
             //         Enter Streaming as Viewer         //
             ///////////////////////////////////////////////
+            Log.d("info", cmClient.cmClientStub.myself.currentSession.toString())
+            Log.d("info", cmClient.cmClientStub.myself.currentGroup .toString())
+            Log.d("info", cmClient.cmClientStub.myself.name.toString())
 
+
+            var bRequestResult = cmClient.cmClientStub.changeGroup("g2")
+            Log.d("response", bRequestResult.toString())
             val intent = Intent(context, StreamingActivity::class.java)
+            intent.putExtra("streaming_mode", 0)
             context.startActivity(intent)
 
         }

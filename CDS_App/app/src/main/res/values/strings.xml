@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CDS_App</string>
+    <string name="server_address">192.168.66.71</string>
 </resources>
