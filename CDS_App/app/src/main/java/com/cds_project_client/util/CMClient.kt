@@ -2,9 +2,12 @@ package com.cds_project_client.util
 
 import android.content.Context
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import com.cds_project_client.R
 import kr.ac.konkuk.ccslab.cm.manager.CMConfigurator
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub
+import org.w3c.dom.Text
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
@@ -14,16 +17,16 @@ import java.nio.file.StandardCopyOption
 class CMClient(
     var context: Context
 ) {
-    lateinit var cmClientStub:CMClientStub
-    lateinit var cmEventHandler: CMClientEventHandler
+    var cmClientStub:CMClientStub
+    var cmEventHandler: CMClientEventHandler
 
     init{
-        initCM()
+        cmClientStub = CMClientStub()
+        cmEventHandler = CMClientEventHandler(cmClientStub)
     }
 
 
     fun initCM(){
-        cmClientStub = CMClientStub()
 
         var strInterPath = context.filesDir.absolutePath
         var interPath = Paths.get(strInterPath)
@@ -69,9 +72,13 @@ class CMClient(
         cmEventHandler = CMClientEventHandler(cmClientStub)
         cmClientStub.appEventHandler = cmEventHandler
 //        val addr = "192.168.254.1"
-        val addr = context.resources.getString(R.string.server_address)
-        cmClientStub.serverAddress = addr
+        val addr = "192.168.66.71"
+        val port = 7777
+//        cmClientStub.serverAddress = "192.168.35.107"
+//        cmClientStub.serverAddress = "192.168.35.107"
 
+        cmClientStub.serverAddress = addr
+        cmClientStub.serverPort = port
         val bRet = cmClientStub.startCM()
 //        Log.d("bRet", bRet.toString())
         if(!bRet){
@@ -81,4 +88,10 @@ class CMClient(
         }
 
     }
+
+    fun printChat(view: TextView, u_id:String, msg:String){
+        var str = "${u_id}: ${msg}"
+        view.append(str)
+    }
+
 }

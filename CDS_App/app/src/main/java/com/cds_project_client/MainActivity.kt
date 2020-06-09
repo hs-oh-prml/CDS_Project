@@ -4,21 +4,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import com.cds_project_client.data.ItemStreaming
-import com.cds_project_client.streaming.StreamingActivity
+import com.cds_project_client.streaming.StreamerActivity
 import com.cds_project_client.util.CMClient
-import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_main.*
-import kr.ac.konkuk.ccslab.cm.manager.CMConfigurator
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub
-import java.io.IOException
-import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 class MainActivity : AppCompatActivity() {
 
@@ -60,31 +52,37 @@ class MainActivity : AppCompatActivity() {
 
         streaming_btn.setOnClickListener {
 
-            val intent = Intent(this, StreamingActivity::class.java)
-            intent.putExtra("streaming_mode", 1)
-//            cmClientStub.
+            val intent = Intent(this, StreamerActivity::class.java)
             startActivity(intent)
         }
     }
 
     fun initCM(){
-        cmClient = CMClient(this)
-        u_id = intent.getStringExtra("user_id")!!
-        u_pw = intent.getStringExtra("user_pw")!!
-        Log.d("Sync Join", u_id)
-        cmClientStub = cmClient.cmClientStub
-        val loginAckEvent = cmClientStub.syncLoginCM(u_id, u_pw)
-        if(loginAckEvent != null){
-            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
-            Log.d("LOGIN_RESPONSE", loginAckEvent.isValidUser.toString())
-            if(loginAckEvent.isValidUser == 0){
-                Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
-            } else if(loginAckEvent.isValidUser == -1){
-                Toast.makeText(this, "Already Login", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Success Login", Toast.LENGTH_SHORT).show()
-            }
-        }
+        cmClient = (application as mApplication).cmClient
+        Log.d("CM_INFO", cmClient.cmClientStub.myself.currentSession)
+        Log.d("CM_INFO", cmClient.cmClientStub.myself.currentGroup)
+        Log.d("CM_INFO", cmClient.cmClientStub.myself.name)
+
+//        = CMClient(this)
+//        u_id = intent.getStringExtra("user_id")!!
+//        u_pw = intent.getStringExtra("user_pw")!!
+//        cmClient.initCM()
+//        var loginAckEvent = cmClient.cmClientStub.syncLoginCM(u_id, u_pw)
+//        if(loginAckEvent != null){
+//            if(loginAckEvent.isValidUser == 0){
+//                Log.d("Sync Login", "Login Failed")
+//            } else if(loginAckEvent.isValidUser == -1){
+//                Log.d("Sync Login", "Already Login")
+//            } else {
+//                Log.d("Sync Login", "Login Succeed")
+//            }
+//        }
+//        val ret = cmClient.cmClientStub.syncJoinSession("session1")
+//        if(ret != null){
+//            Log.d("CM Response", "(${ret.groupNum}) Groups")
+//        } else {
+//            Log.d("CM Response", "Failed The Session-Join Request!")
+//        }
     }
 
 }

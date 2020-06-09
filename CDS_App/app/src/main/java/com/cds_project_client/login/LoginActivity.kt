@@ -2,22 +2,13 @@ package com.cds_project_client.login
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.cds_project_client.MainActivity
 import com.cds_project_client.R
+import com.cds_project_client.mApplication
 import com.cds_project_client.util.CMClient
-import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_login.*
-import kr.ac.konkuk.ccslab.cm.manager.CMConfigurator
-import kr.ac.konkuk.ccslab.cm.stub.CMClientStub
-import java.io.IOException
-import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
 
 
 class LoginActivity : AppCompatActivity() {
@@ -30,7 +21,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun init(){
-        cmClient = CMClient(this)
+        var app = application as mApplication
+        app.initCM(this)
+        cmClient = app.cmClient
 
             login_btn.setOnClickListener {
 
@@ -43,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
 
             val loginAckEvent = cmClient.cmClientStub.syncLoginCM(u_id, u_pw)
 //            val bRequestResult = cmClientStub.loginCM(u_id, u_pw)
-            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
+//            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
             if(loginAckEvent != null){
                 if(loginAckEvent.isValidUser == 0){
                     Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
