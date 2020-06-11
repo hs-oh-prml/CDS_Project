@@ -25,7 +25,8 @@ public class CDS_Server {
 	private boolean m_bRun;
 	private CMSNSUserAccessSimulator m_uaSim;
 	private Scanner m_scan = null;
-
+	
+	//test
 	public CDS_Server()
 	{
 		m_serverStub = new CMServerStub();
