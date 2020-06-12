@@ -3,4 +3,12 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="whitesmoke">#F5F5F5</color>
+    <color name="lavenderblush">#FFF0F5</color>
+    <color name="lightgrey">#D3D3D3</color>
+    <color name="darkmagenta">#8B008B</color>
+    <color name="white">#FFFFFF</color>
+    <color name="darkred">#770000</color>
+
 </resources>
+

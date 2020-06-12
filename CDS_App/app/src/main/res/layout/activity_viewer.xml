@@ -7,6 +7,7 @@
     tools:context=".streaming.ViewerActivity"
     android:orientation="vertical"
     >
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,12 +43,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:padding = "5px"
                 >
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/input_chatting"
                     android:hint="Input Message"
+                    android:background="@null"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     />
                 <Button
