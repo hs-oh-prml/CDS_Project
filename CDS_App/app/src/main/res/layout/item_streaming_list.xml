@@ -5,6 +5,7 @@
     android:orientation="horizontal"
     android:padding="10dp"
     android:gravity="center_vertical"
+
     >
     <TextView
         android:layout_margin="10dp"
@@ -12,13 +13,23 @@
         android:layout_height="wrap_content"
         android:id="@+id/streamer_id"
         android:text="streamer id"
+        android:textSize="25sp"
         android:layout_weight="1"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/viewers_number"
-        android:text="0/8"
+        android:text="0"
+        android:textSize="15sp"
+        android:textColor="@color/darkred"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/max_viewers_number"
+        android:text="/8"
+        android:textSize="15sp"
         />
 
 </LinearLayout>
