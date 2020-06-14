@@ -25,7 +25,7 @@ public class CDS_Server {
 	private boolean m_bRun;
 	private CMSNSUserAccessSimulator m_uaSim;
 	private Scanner m_scan = null;
-
+	
 	public CDS_Server()
 	{
 		m_serverStub = new CMServerStub();
@@ -124,6 +124,7 @@ public class CDS_Server {
 		return;
 	}
 	
+	// 질문: 그룹은 프린트 할 일 없을 것 같은데 지울까요?
 	public void printGroupInfo()
 	{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

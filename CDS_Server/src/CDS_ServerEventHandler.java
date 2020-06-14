@@ -44,6 +44,8 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 //		System.out.println("DB: " + url);
 //		CMDBManager.init(ci);
 //		CMDBManager.connectDB(ci);
+		
+		// 질문: 로그아웃은 필요없나요?
 		switch(se.getID()){
 		case CMSessionEvent.LOGIN:
 			System.out.println("[" + se.getUserName() + "] requests login");
@@ -66,9 +68,17 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 		case CMSessionEvent.REGISTER_USER:
 			System.out.println("User registration requested by user["+se.getUserName()+"].\n");
 			break;
+			
+		case CMSessionEvent.REQUEST_SESSION_INFO:
+			System.out.println("["+se.getUserName()+"] requests session information.");
+			break;
 
 		case CMSessionEvent.JOIN_SESSION:
 			System.out.println("["+se.getUserName()+"] requests to join session("+se.getSessionName()+").");
+			break;
+			
+		case CMSessionEvent.LEAVE_SESSION:
+			System.out.println("["+se.getUserName()+"] leaves a session("+se.getSessionName()+").");
 			break;
 
 		default:
