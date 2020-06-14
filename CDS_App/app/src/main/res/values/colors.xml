@@ -9,6 +9,8 @@
     <color name="darkmagenta">#8B008B</color>
     <color name="white">#FFFFFF</color>
     <color name="darkred">#770000</color>
+    <color name="steelblue">#4682B4</color>
+    <color name="black">#000000</color>
 
 </resources>
 
