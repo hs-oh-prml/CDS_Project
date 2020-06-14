@@ -7,7 +7,33 @@
     tools:context=".streaming.ViewerActivity"
     android:orientation="vertical"
     >
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:background="@color/white"
+        >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:text="STREAMER ID"
+        android:textSize="16sp"
+        android:textColor="@color/darkred"
+        android:textStyle="bold"
+        android:layout_weight="1" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/logout_btn"
+        android:src="@drawable/logout2"
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        />
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
