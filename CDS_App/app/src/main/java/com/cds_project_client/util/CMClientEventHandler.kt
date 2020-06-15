@@ -1,6 +1,9 @@
 package com.cds_project_client.util
 
 import android.util.Log
+import com.cds_project_client.data.ItemStreaming
+import kr.ac.konkuk.ccslab.cm.entity.CMSessionInfo
+import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 import kr.ac.konkuk.ccslab.cm.event.CMEvent
 import kr.ac.konkuk.ccslab.cm.event.CMSessionEvent
 import kr.ac.konkuk.ccslab.cm.event.handler.CMAppEventHandler
@@ -8,7 +11,8 @@ import kr.ac.konkuk.ccslab.cm.info.CMInfo
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub
 
 class CMClientEventHandler(
-    var clientStub:CMClientStub
+    var clientStub:CMClientStub,
+    var cmSessions: ArrayList<ItemStreaming>
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
@@ -27,9 +31,29 @@ class CMClientEventHandler(
             CMInfo.CM_SESSION_EVENT->{
                 processSessionEvent(p0)
             }
-            CMInfo.CM_SESSION_JOIN->{
+            CMInfo.CM_DUMMY_EVENT->{
+                processDummyEvent(p0)
             }
             else->{
+            }
+        }
+    }
+
+    private fun processDummyEvent(cme: CMEvent) {
+        var due = cme as CMDummyEvent
+        var req = due.dummyInfo.split("#".toRegex())
+        when(req[0]) {
+            "RESPONSE_STREAMER_START"->{
+                if(req[1] != "") clientStub.joinSession(req[1]);
+            }
+            "RESPONSE_STREAMER_END"->{
+                clientStub.leaveSession();
+            }
+            "RESPONSE_STREAMER_ID"->{
+                var streamers = req[1].split("@@".toRegex())
+                for(i in 0..streamers.size){
+                    if(streamers[i] != "") cmSessions[i].streamer_id = streamers[i]
+                }
             }
         }
     }
@@ -69,6 +93,32 @@ class CMClientEventHandler(
                 System.out.println("<"+se.getUserName()+">: "+se.getTalk());
                 cListener.printChat(se.userName, se.talk)
             }
+            CMSessionEvent.RESPONSE_SESSION_INFO->{
+                processRESPONSE_SESSION_INFO(se);
+            }
+        }
+    }
+
+    private fun processRESPONSE_SESSION_INFO(se: CMSessionEvent) {
+        val iter: Iterator<CMSessionInfo> = se.sessionInfoList.iterator()
+
+        System.out.format(
+            "%-60s%n",
+            "------------------------------------------------------------"
+        )
+        System.out.format("%-20s%-20s%-10s%-10s%n", "name", "address", "port", "user num")
+        System.out.format(
+            "%-60s%n",
+            "------------------------------------------------------------"
+        )
+        var i = 0
+        while (iter.hasNext()) {
+            val tInfo: CMSessionInfo = iter.next()
+            System.out.format(
+                "%-20s%-20s%-10d%-10d%n", tInfo.getSessionName(), tInfo.getAddress(),
+                tInfo.getPort(), tInfo.getUserNum()
+            )
+            cmSessions[i++].viewers_num = tInfo.getUserNum().toString()
         }
     }
 

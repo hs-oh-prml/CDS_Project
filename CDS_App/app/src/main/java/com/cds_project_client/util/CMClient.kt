@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import com.cds_project_client.R
+import com.cds_project_client.data.ItemStreaming
 import kr.ac.konkuk.ccslab.cm.manager.CMConfigurator
 import kr.ac.konkuk.ccslab.cm.stub.CMClientStub
 import org.w3c.dom.Text
@@ -16,13 +17,19 @@ import java.nio.file.StandardCopyOption
 
 class CMClient(
     var context: Context
+
 ) {
     var cmClientStub:CMClientStub
     var cmEventHandler: CMClientEventHandler
+    lateinit var cmSessions: ArrayList<ItemStreaming>
 
     init{
         cmClientStub = CMClientStub()
-        cmEventHandler = CMClientEventHandler(cmClientStub)
+        cmSessions = ArrayList()
+        for(i in 0..5){
+            cmSessions.add(ItemStreaming("", "0"))
+        }
+        cmEventHandler = CMClientEventHandler(cmClientStub, cmSessions)
     }
 
 
@@ -69,7 +76,6 @@ class CMClient(
             println(strConf)
         }
 
-        cmEventHandler = CMClientEventHandler(cmClientStub)
         cmClientStub.appEventHandler = cmEventHandler
 //        val addr = "192.168.254.1"
         val addr = "192.168.66.71"

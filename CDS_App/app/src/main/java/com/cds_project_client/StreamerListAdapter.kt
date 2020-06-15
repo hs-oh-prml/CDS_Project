@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cds_project_client.data.ItemStreaming
 import com.cds_project_client.streaming.ViewerActivity
 import com.cds_project_client.util.CMClient
+import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 
 class StreamerListAdapter(
     var context: Context,
@@ -41,9 +42,10 @@ class StreamerListAdapter(
             Log.d("info", cmClient.cmClientStub.myself.currentGroup .toString())
             Log.d("info", cmClient.cmClientStub.myself.name.toString())
 
+            val due: CMDummyEvent = CMDummyEvent()
+            due.dummyInfo = "STREAMINGSTART"+"#"+cmClient.cmClientStub.myself.name
+            cmClient.cmClientStub.send(due, "SERVER");
 
-            var bRequestResult = cmClient.cmClientStub.changeGroup("g2")
-            Log.d("response", bRequestResult.toString())
             val intent = Intent(context, ViewerActivity::class.java)
             intent.putExtra("streaming_mode", 0)
             context.startActivity(intent)

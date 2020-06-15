@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/max_viewers_number"
-        android:text="/8"
+        android:text=""
         android:textSize="15sp"
         />
 

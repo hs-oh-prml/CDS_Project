@@ -36,7 +36,7 @@
         <Button
             android:text="확인"
             android:textColor="@color/white"
-            android:margin = "10dp"
+            android:layout_margin = "10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="mOnPopupClick"/>

@@ -30,10 +30,9 @@ class MainActivity : AppCompatActivity() {
 
     fun dataInit(){
         // Dummy Data
-        for(i in 0..10){
-            itemList.add(ItemStreaming("${i}-Streamer", "${0/8}"))
+        for(i in 0..cmClient.cmSessions.size-1){
+            if(cmClient.cmSessions[i].streamer_id != "") itemList.add(cmClient.cmSessions[i])
         }
-        
         ///////////////////////////////////////////////
         //           Get List from Server            //
         ///////////////////////////////////////////////
