@@ -146,9 +146,10 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 			due = null;
 			break;
 		case "STREAMINGEND":
-			m_sessionStub.leaveSession(req[1]);
+			String sessionName = m_sessionStub.leaveSession(req[1]);
 			sendDue.setDummyInfo("RESPONSE_STREAMER_END" + "#" + "1");
-			m_serverStub.multicast(sendDue, req[1], null);
+			System.out.println(sessionName);
+//			if(sessionName != "") m_serverStub.multicast(sendDue, sessionName, null);
 			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
 			due = null;
 			break;

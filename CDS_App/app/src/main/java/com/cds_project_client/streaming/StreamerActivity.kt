@@ -2,6 +2,7 @@ package com.cds_project_client.streaming
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ConfigurationInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -21,12 +22,14 @@ import android.view.TextureView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.cds_project_client.MainActivity
 import com.cds_project_client.R
 import com.cds_project_client.mApplication
 import com.cds_project_client.util.CMClient
 import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_streamer.*
 import kr.ac.konkuk.ccslab.cm.event.CMDataEvent
+import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 import kr.ac.konkuk.ccslab.cm.event.CMEvent
 import java.io.*
 
@@ -88,6 +91,15 @@ class StreamerActivity : AppCompatActivity() {
         cmClient.cmEventHandler.cListener = listener
 
         video_view.surfaceTextureListener = textureListener
+
+        streamer_leave_btn.setOnClickListener {
+            val due: CMDummyEvent = CMDummyEvent()
+            due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+            cmClient.cmClientStub.send(due, "SERVER");
+
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
