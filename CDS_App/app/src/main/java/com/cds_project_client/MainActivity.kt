@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         for(i in 0..10){
             itemList.add(ItemStreaming("${i}-Streamer", "${0/8}"))
         }
-        
         ///////////////////////////////////////////////
         //           Get List from Server            //
         ///////////////////////////////////////////////
@@ -41,8 +40,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init(){
-        cmClient = CMClient(this)
-        cmClientStub = cmClient.cmClientStub
         itemList = ArrayList()
         dataInit()
         val layoutManager = LinearLayoutManager(this, VERTICAL, false)
@@ -51,9 +48,11 @@ class MainActivity : AppCompatActivity() {
         recycler_view.adapter = adapter
 
         streaming_btn.setOnClickListener {
-
             val intent = Intent(this, StreamerActivity::class.java)
+            cmClient.cmClientStub.joinSession("session2")
+//            cmClient.cmClientStub.cha
             startActivity(intent)
+
         }
     }
 
