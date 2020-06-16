@@ -67,12 +67,9 @@ class StreamerActivity : AppCompatActivity() {
             val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
             cmClient.cmClientStub.send(due, "SERVER");
-
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
         }
     }
-
 
     private fun onCameraPermissionGranted() {
         rtcClient = RTCClient(

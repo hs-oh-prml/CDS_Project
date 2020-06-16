@@ -10,6 +10,7 @@ import com.cds_project_client.data.ItemStreaming
 import com.cds_project_client.login.LoginActivity
 import com.cds_project_client.streaming.StreamerActivity
 import com.cds_project_client.util.CMClient
+import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var u_id:String
     lateinit var u_pw:String
-
+    lateinit var adapter: StreamerListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,10 +28,28 @@ class MainActivity : AppCompatActivity() {
         init()
     }
 
+    override fun onResume() {
+        super.onResume()
+        adapter.notifyDataSetChanged()
+
+    }
+
     private fun init(){
 
+        var sListener = object: CMClientEventHandler.cmSessListener{
+            override fun sessionRefresh(sessionNums: ArrayList<String>) {
+//                TODO("Not yet implemented")
+                runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+
         val layoutManager = LinearLayoutManager(this, VERTICAL, false)
-        val adapter = StreamerListAdapter(this, cmClient.cmSessions, cmClient)
+        adapter = StreamerListAdapter(this, cmClient.cmSessions, cmClient)
+
+        Log.d("SESSION_INFO", cmClient.cmSessions.toString())
+//        adapter.notifyDataSetChanged()
         recycler_view.layoutManager = layoutManager
         recycler_view.adapter = adapter
 
@@ -44,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             cmClient.cmClientStub.joinSession("session2")
 //            cmClient.cmClientStub.cha
             startActivity(intent)
-
         }
 
         logout_btn.setOnClickListener {
@@ -60,6 +78,8 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+
+        cmClient.cmEventHandler.sListener = sListener
     }
 
     fun initCM(){

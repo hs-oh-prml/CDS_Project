@@ -16,6 +16,8 @@ class CMClientEventHandler(
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
+    lateinit var sListener:cmSessListener
+
     var sessionNums: ArrayList<String>
 
     init{
@@ -33,6 +35,9 @@ class CMClientEventHandler(
     }
     interface datagramListener{
         fun streaming(bytes:ByteArray)
+    }
+    interface cmSessListener{
+        fun sessionRefresh(sessionNums:ArrayList<String>)
     }
     override fun processEvent(p0: CMEvent?) {
 //        TODO("Not yet implemented")
@@ -132,6 +137,7 @@ class CMClientEventHandler(
                 tInfo.getPort(), tInfo.getUserNum()
             )
             sessionNums[i] = tInfo.getUserNum().toString()
+            if(sListener != null) sListener.sessionRefresh(sessionNums)
         }
     }
 

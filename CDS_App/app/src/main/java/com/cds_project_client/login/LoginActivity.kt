@@ -34,35 +34,35 @@ class LoginActivity : AppCompatActivity() {
 
             val u_id = input_id.text.toString()
             val u_pw = input_pw.text.toString()
-
-            val bRequestResult = cmClient.cmClientStub.loginCM(u_id, u_pw)
-            if(bRequestResult) {
-                Toast.makeText(this, "successfully sent the login request.", Toast.LENGTH_SHORT)
-                    .show()
-                val intent = Intent(this, MainActivity::class.java)
-                    intent.putExtra("user_id", u_id)
-                    intent.putExtra("user_pw", u_pw)
-                    startActivity(intent)
-                    finish()
-            }
-            else
-                Toast.makeText(this, "failed the login request!", Toast.LENGTH_SHORT).show()
-
-//            val loginAckEvent = cmClient.cmClientStub.syncLoginCM(u_id, u_pw)
-//            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
-//            if(loginAckEvent != null){
-//                if(loginAckEvent.isValidUser == 0){
-//                    Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
-//                } else if(loginAckEvent.isValidUser == -1){
-//                    Toast.makeText(this, "Already Login", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    val intent = Intent(this, MainActivity::class.java)
+//
+//            val bRequestResult = cmClient.cmClientStub.syncLoginCM(u_id, u_pw)
+//            if(bRequestResult) {
+//                Toast.makeText(this, "successfully sent the login request.", Toast.LENGTH_SHORT)
+//                    .show()
+//                val intent = Intent(this, MainActivity::class.java)
 //                    intent.putExtra("user_id", u_id)
 //                    intent.putExtra("user_pw", u_pw)
 //                    startActivity(intent)
 //                    finish()
-//                }
 //            }
+//            else
+//                Toast.makeText(this, "failed the login request!", Toast.LENGTH_SHORT).show()
+
+            val loginAckEvent = cmClient.cmClientStub.syncLoginCM(u_id, u_pw)
+            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
+            if(loginAckEvent != null){
+                if(loginAckEvent.isValidUser == 0){
+                    Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
+                } else if(loginAckEvent.isValidUser == -1){
+                    Toast.makeText(this, "Already Login", Toast.LENGTH_SHORT).show()
+                } else {
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("user_id", u_id)
+                    intent.putExtra("user_pw", u_pw)
+                    startActivity(intent)
+                    finish()
+                }
+            }
 //            if(bRequestResult){
 //            } else{
 //                Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
