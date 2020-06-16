@@ -44,6 +44,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        cmClient.cmEventHandler.sListener = sListener
+
         val layoutManager = LinearLayoutManager(this, VERTICAL, false)
         adapter = StreamerListAdapter(this, cmClient.cmSessions, cmClient)
 
@@ -76,7 +78,6 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        cmClient.cmEventHandler.sListener = sListener
     }
 
     fun initCM(){
