@@ -16,7 +16,7 @@ class CMClientEventHandler(
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
-    lateinit var sListener:cmSessListener
+    var sListener:cmSessListener? = null
 
     var sessionNums: ArrayList<String>
 
@@ -137,7 +137,7 @@ class CMClientEventHandler(
                 tInfo.getPort(), tInfo.getUserNum()
             )
             sessionNums[i] = tInfo.getUserNum().toString()
-            if(sListener != null) sListener.sessionRefresh(sessionNums)
+            sListener?.sessionRefresh(sessionNums)
         }
     }
 
