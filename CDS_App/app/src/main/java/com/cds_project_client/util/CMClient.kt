@@ -21,14 +21,11 @@ class CMClient(
 ) {
     var cmClientStub:CMClientStub
     var cmEventHandler: CMClientEventHandler
-    lateinit var cmSessions: ArrayList<ItemStreaming>
+    var cmSessions: ArrayList<ItemStreaming>
 
     init{
         cmClientStub = CMClientStub()
         cmSessions = ArrayList()
-        for(i in 0..5){
-            cmSessions.add(ItemStreaming("", "0"))
-        }
         cmEventHandler = CMClientEventHandler(cmClientStub, cmSessions)
     }
 
@@ -78,7 +75,9 @@ class CMClient(
 
         cmClientStub.appEventHandler = cmEventHandler
 //        val addr = "192.168.254.1"
-        val addr = "192.168.66.71"
+//        val addr = "192.168.66.71"
+        val addr = "192.168.64.221"
+//        var addr = "192.168.0.3"
         val port = 7777
 //        cmClientStub.serverAddress = "192.168.35.107"
 //        cmClientStub.serverAddress = "192.168.35.107"

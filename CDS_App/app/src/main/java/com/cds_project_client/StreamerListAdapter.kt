@@ -41,10 +41,12 @@ class StreamerListAdapter(
             Log.d("info", cmClient.cmClientStub.myself.currentSession.toString())
             Log.d("info", cmClient.cmClientStub.myself.currentGroup .toString())
             Log.d("info", cmClient.cmClientStub.myself.name.toString())
+            Log.d("info", cmClient.cmClientStub.myself.host.toString())
 
-            val due: CMDummyEvent = CMDummyEvent()
-            due.dummyInfo = "STREAMINGSTART"+"#"+cmClient.cmClientStub.myself.name
-            cmClient.cmClientStub.send(due, "SERVER");
+
+            Log.d("CREATION", "session${position+1}")
+            cmClient.cmClientStub.requestSessionInfo()
+            cmClient.cmClientStub.joinSession("session${position+1}")
 
             val intent = Intent(context, ViewerActivity::class.java)
             intent.putExtra("streaming_mode", 0)

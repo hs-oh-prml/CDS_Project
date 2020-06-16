@@ -30,6 +30,7 @@ public class CDS_Server {
 	public CDS_Server()
 	{
 		m_serverStub = new CMServerStub();
+		m_sessionStub = new CMServerSessionStub();
 		m_eventHandler = new CDS_ServerEventHandler(m_serverStub, m_sessionStub);
 		m_bRun = true;
 		m_uaSim = new CMSNSUserAccessSimulator();

@@ -16,6 +16,15 @@ class CMClientEventHandler(
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
+    var sessionNums: ArrayList<String>
+
+    init{
+        sessionNums = ArrayList()
+        for(i in 0..4){
+            sessionNums.add("0")
+        }
+    }
+
     interface cmChatListener{
         fun printChat(u_id:String, msg:String)
     }
@@ -44,15 +53,19 @@ class CMClientEventHandler(
         var req = due.dummyInfo.split("#".toRegex())
         when(req[0]) {
             "RESPONSE_STREAMER_START"->{
-                if(req[1] != "") clientStub.joinSession(req[1]);
+                if(req[1] != ".") {
+                    clientStub.joinSession(req[1])
+                }
             }
             "RESPONSE_STREAMER_END"->{
-                clientStub.leaveSession();
+                clientStub.leaveSession()
             }
             "RESPONSE_STREAMER_ID"->{
+                cmSessions.clear()
                 var streamers = req[1].split("@@".toRegex())
-                for(i in 0..streamers.size){
-                    if(streamers[i] != "") cmSessions[i].streamer_id = streamers[i]
+                for(i in 0..streamers.size-2){
+                    Log.d("STREAMERID", streamers[i])
+                    if(streamers[i] != ".") cmSessions.add(ItemStreaming(streamers[i], sessionNums[i]))
                 }
             }
         }
@@ -118,7 +131,7 @@ class CMClientEventHandler(
                 "%-20s%-20s%-10d%-10d%n", tInfo.getSessionName(), tInfo.getAddress(),
                 tInfo.getPort(), tInfo.getUserNum()
             )
-            cmSessions[i++].viewers_num = tInfo.getUserNum().toString()
+            sessionNums[i] = tInfo.getUserNum().toString()
         }
     }
 
