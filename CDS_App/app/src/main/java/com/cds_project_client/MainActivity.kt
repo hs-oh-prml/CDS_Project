@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
 
         }
- 
+
         logout_btn.setOnClickListener {
             var bRequestResult = false
             println("====== logout from default server")
