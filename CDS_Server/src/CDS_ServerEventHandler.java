@@ -80,6 +80,7 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 			String req = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
 			CMDummyEvent sendDue = new CMDummyEvent();
 			sendDue.setDummyInfo(req);
+//			m_serverStub.broadcast(sendDue);
 			m_serverStub.send(sendDue, se.getUserName());
 			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
 			break;
@@ -133,25 +134,42 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 		 * 정의: 스트리밍 시작 요청 
 		 * Send: 성공하면 가능한 세선 이름, 실패하면 ""을 제공 
 		 * 동작: 
+		 * 
+		 * ===REQUEST_STREAM
+		 * 정의: 스트리머에게 동영상 요청
+		 * Send: x 
 		 */
 		
 		CMDummyEvent due = (CMDummyEvent) cme;
 		String[] req = due.getDummyInfo().split("#");
 		CMDummyEvent sendDue = new CMDummyEvent();
+//		System.out.println("===================== sessionName: "+ due.getHandlerSession());
 		switch(req[0]) {
 		case "STREAMINGSTART":
 			sendDue.setDummyInfo("RESPONSE_STREAMER_START" + "#" + m_sessionStub.getPossibleSession(req[1]));
 			m_serverStub.send(sendDue, req[1]);
 			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
 			due = null;
+			
+			String req2 = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
+			sendDue = new CMDummyEvent();
+			sendDue.setDummyInfo(req2);
+			m_serverStub.broadcast(sendDue);
+			
 			break;
 		case "STREAMINGEND":
 			String sessionName = m_sessionStub.leaveSession(req[1]);
 			sendDue.setDummyInfo("RESPONSE_STREAMER_END" + "#" + "1");
 			System.out.println(sessionName);
-//			if(sessionName != "") m_serverStub.multicast(sendDue, sessionName, null);
-			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
+			System.out.println("보낸 메세지: "+sendDue.getDummyInfo()+", "+ due.getHandlerSession());
+			if(sessionName != "") m_serverStub.cast(sendDue, due.getHandlerSession(), null);
 			due = null;
+			
+			String req3 = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
+			sendDue = new CMDummyEvent();
+			sendDue.setDummyInfo(req3);
+			m_serverStub.broadcast(sendDue);
+			
 			break;
 		default:
 			break;

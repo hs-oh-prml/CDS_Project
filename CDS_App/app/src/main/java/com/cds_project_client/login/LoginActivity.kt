@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
 //                Toast.makeText(this, "failed the login request!", Toast.LENGTH_SHORT).show()
 
             val loginAckEvent = cmClient.cmClientStub.syncLoginCM(u_id, u_pw)
-            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
+//            Log.d("LOGIN_RESPONSE", loginAckEvent.toString())
             if(loginAckEvent != null){
                 if(loginAckEvent.isValidUser == 0){
                     Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()

@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@android:color/transparent"
+
     >
     <TextView
         android:layout_width="300px"

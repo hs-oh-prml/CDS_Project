@@ -47,9 +47,9 @@ class StreamerListAdapter(
             Log.d("CREATION", "session${position+1}")
             cmClient.cmClientStub.requestSessionInfo()
             cmClient.cmClientStub.joinSession("session${position+1}")
-
+            Log.d("STREAMER_ID_FROM_LIST", data.streamer_id)
             val intent = Intent(context, ViewerActivity::class.java)
-            intent.putExtra("streaming_mode", 0)
+            intent.putExtra("streamerId", data.streamer_id)
             context.startActivity(intent)
 
         }

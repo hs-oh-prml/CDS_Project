@@ -32,6 +32,7 @@ public class CMServerSessionStub {
 		}
 		return "";
 	}
+	
 	public String getPossibleSession(String senderID) {
 		String ret = initStr;
 		for(int i = 0; i < MAXSTREAMER; ++i) {

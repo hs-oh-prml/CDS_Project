@@ -17,7 +17,6 @@ import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 class MainActivity : AppCompatActivity() {
 
     lateinit var cmClient: CMClient
-
     lateinit var u_id:String
     lateinit var u_pw:String
     lateinit var adapter: StreamerListAdapter
@@ -58,10 +57,7 @@ class MainActivity : AppCompatActivity() {
             val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGSTART"+"#"+cmClient.cmClientStub.myself.name
             cmClient.cmClientStub.send(due, "SERVER");
-
             val intent = Intent(this, StreamerActivity::class.java)
-            cmClient.cmClientStub.joinSession("session2")
-//            cmClient.cmClientStub.cha
             startActivity(intent)
         }
 
@@ -77,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         cmClient.cmEventHandler.sListener = sListener
@@ -109,6 +106,19 @@ class MainActivity : AppCompatActivity() {
 //        } else {
 //            Log.d("CM Response", "Failed The Session-Join Request!")
 //        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        var bRequestResult = false
+        println("====== logout from default server")
+        bRequestResult = cmClient.cmClientStub.logoutCM()
+        if (bRequestResult)
+            println("successfully sent the logout request.")
+        else
+            System.err.println("failed the logout request!")
+        println("======")
+
     }
 
 }
