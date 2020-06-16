@@ -76,8 +76,8 @@ class CMClient(
         cmClientStub.appEventHandler = cmEventHandler
 //        val addr = "192.168.254.1"
 //        val addr = "192.168.66.71"
-//        val addr = "203.252.166.239"
-        var addr = "192.168.64.221"
+        val addr = "203.252.166.239"
+//        var addr = "192.168.64.221"
         val port = 7777
 //        cmClientStub.serverAddress = "192.168.35.107"
 //        cmClientStub.serverAddress = "192.168.35.107"

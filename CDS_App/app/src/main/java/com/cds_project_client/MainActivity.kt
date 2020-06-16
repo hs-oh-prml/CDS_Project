@@ -17,7 +17,6 @@ import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 class MainActivity : AppCompatActivity() {
 
     lateinit var cmClient: CMClient
-    lateinit var adapter:StreamerListAdapter
     lateinit var u_id:String
     lateinit var u_pw:String
     lateinit var adapter: StreamerListAdapter
@@ -74,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+            finish()
         }
 
         cmClient.cmEventHandler.sListener = sListener
@@ -119,8 +119,6 @@ class MainActivity : AppCompatActivity() {
             System.err.println("failed the logout request!")
         println("======")
 
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
     }
 
 }

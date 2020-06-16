@@ -42,10 +42,10 @@ class SignUpActivity : AppCompatActivity() {
             var user_pw = sign_up_pw.text.toString()
             var user_pw_confirm = sign_up_pw_confirm.text.toString()
 
-//            if(user_id.length < 6){
-//                Toast.makeText(this, "Password must be over  6 lengths letters", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
+            if(user_id.length < 6){
+                Toast.makeText(this, "ID must be over 6 lengths letters", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             ///////////////////////////////////////////////
             //               Validate ID                 //

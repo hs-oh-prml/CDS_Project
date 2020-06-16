@@ -85,7 +85,7 @@ class ViewerActivity : AppCompatActivity() {
             object : PeerConnectionObserver() {
                 override fun onIceCandidate(p0: IceCandidate?) {
                     super.onIceCandidate(p0)
-//                    signallingClient.send(p0)
+                    signallingClient.send(p0)
                     rtcClient.addIceCandidate(p0)
                 }
 
@@ -107,18 +107,21 @@ class ViewerActivity : AppCompatActivity() {
 //                TODO("Not yet implemented")
                 Log.d("STREAMING_PROTOCALL", "VIEWER_OK")
 //                rtcClient.call(sdpObserver)
-
             }
         }
 
         cmClient.cmEventHandler.stListener = stListener
 //        cmClient.cmEventHandler.
 
-        call_video.setOnClickListener { rtcClient.call(sdpObserver) }
-        var due = CMDummyEvent()
-        due.dummyInfo = "REQUEST_STREAM_TO_STREAMER#"+cmClient.cmClientStub.myself.currentSession
-        cmClient.cmClientStub.send(due, streamerId)
-        rtcClient.call(sdpObserver)
+//        call_video.setOnClickListener { rtcClient.call(sdpObserver) }
+        var handler = Handler()
+        handler.postDelayed(Runnable {
+            var due = CMDummyEvent()
+            due.dummyInfo = "REQUEST_STREAM_TO_STREAMER#"+cmClient.cmClientStub.myself.currentSession
+            cmClient.cmClientStub.send(due, streamerId)
+
+        },2000)
+//        rtcClient.call(sdpObserver)
     }
 
     private fun createSignallingClientListener() = object : SignallingClientListener {
@@ -185,7 +188,6 @@ class ViewerActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cmClient.cmClientStub.leaveSession()
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        finish()
     }
 }

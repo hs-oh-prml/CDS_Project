@@ -16,7 +16,9 @@ class CMClientEventHandler(
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
+    lateinit var stListener:cmStreamingListener
     var sListener:cmSessListener? = null
+
 
     var sessionNums: ArrayList<String>
 
@@ -42,9 +44,7 @@ class CMClientEventHandler(
         fun sessionRefresh(cmSessions: ArrayList<String>)
 
     }
-    interface cmSessListener{
-        fun sessionRefresh(sessionNums:ArrayList<String>)
-    }
+
     override fun processEvent(p0: CMEvent?) {
 //        TODO("Not yet implemented")
         when(p0?.type){

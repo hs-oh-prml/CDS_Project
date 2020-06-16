@@ -71,7 +71,7 @@ class StreamerActivity : AppCompatActivity() {
             }
         }
         cmClient.cmEventHandler.cListener = listener
-        call_btn.setOnClickListener { rtcClient.call(sdpObserver) }
+//        call_btn.setOnClickListener { rtcClient.call(sdpObserver) }
 //        rtcClient.call(sdpObserver)
 
         onCameraPermissionGranted()
@@ -87,8 +87,7 @@ class StreamerActivity : AppCompatActivity() {
             override fun toStreamer(sender:String) {
 //                TODO("Not yet implemented")
                 Log.d("STREAMING_PROTOCALL", "STREAMER_OK")
-                rtcClient.answer(sdpObserver)
-                sdpObserver.onSetSuccess()
+                rtcClient.call(sdpObserver)
                 var due = CMDummyEvent()
                 due.dummyInfo = "REQUEST_STREAM_TO_VIEWER"
                 cmClient.cmClientStub.send(due, sender)
