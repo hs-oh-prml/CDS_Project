@@ -64,6 +64,7 @@ class CMClientEventHandler(
             }
             "RESPONSE_STREAMER_END"->{
                 clientStub.leaveSession()
+                Log.d("RES_S_END", "sessionEND")
             }
             "RESPONSE_STREAMER_ID"->{
                 cmSessions.clear()

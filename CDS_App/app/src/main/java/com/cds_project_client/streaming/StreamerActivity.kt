@@ -71,6 +71,14 @@ class StreamerActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        val due: CMDummyEvent = CMDummyEvent()
+        due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+        cmClient.cmClientStub.send(due, "SERVER");
+        finish()
+    }
+
     private fun onCameraPermissionGranted() {
         rtcClient = RTCClient(
             application,

@@ -111,4 +111,19 @@ class MainActivity : AppCompatActivity() {
 //        }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        var bRequestResult = false
+        println("====== logout from default server")
+        bRequestResult = cmClient.cmClientStub.logoutCM()
+        if (bRequestResult)
+            println("successfully sent the logout request.")
+        else
+            System.err.println("failed the logout request!")
+        println("======")
+
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
 }
