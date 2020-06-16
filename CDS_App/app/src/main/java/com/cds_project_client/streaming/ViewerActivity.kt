@@ -3,7 +3,9 @@ package com.cds_project_client.streaming
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.method.ScrollingMovementMethod
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,8 @@ import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_streamer.*
 import kotlinx.android.synthetic.main.activity_viewer.*
+import kotlinx.coroutines.delay
+import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.SessionDescription
@@ -23,6 +27,7 @@ import org.webrtc.SessionDescription
 class ViewerActivity : AppCompatActivity() {
 
     lateinit var cmClient: CMClient
+    var streamerId = ""
 
     private lateinit var rtcClient: RTCClient
     private lateinit var signallingClient: SignallingClient
@@ -31,6 +36,17 @@ class ViewerActivity : AppCompatActivity() {
         override fun onCreateSuccess(p0: SessionDescription?) {
             super.onCreateSuccess(p0)
             signallingClient.send(p0)
+        }
+
+        override fun onSetFailure(p0: String?) {
+            super.onSetFailure(p0)
+            Log.d("VIEWER_APPSDPOBSERVER_STATUS", "SET FAILED")
+        }
+
+        override fun onCreateFailure(p0: String?) {
+            super.onCreateFailure(p0)
+            Log.d("VIEWER_APPSDPOBSERVER_STATUS", "CREATED FAILED")
+
         }
     }
 
@@ -50,6 +66,17 @@ class ViewerActivity : AppCompatActivity() {
         cmClient.cmEventHandler.cListener = listener
         init()
         initVideo()
+//        var handler = Handler()
+//        handler.postDelayed(object:Runnable{
+//            override fun run() {
+////                TODO("Not yet implemented")
+//                rtcClient.call(sdpObserver)
+//                var due = CMDummyEvent()
+//                due.dummyInfo = "REQUEST_STREAM_TO_STREAMER#"+cmClient.cmClientStub.myself.currentSession
+//                cmClient.cmClientStub.send(due, streamerId)
+//            }
+//        },1000)
+
     }
 
     fun initVideo(){
@@ -70,8 +97,28 @@ class ViewerActivity : AppCompatActivity() {
         )
         rtcClient.initSurfaceView(video_view)
         signallingClient = SignallingClient(createSignallingClientListener())
+
+        var stListener = object:CMClientEventHandler.cmStreamingListener{
+            override fun toStreamer(sender: String) {
+//                TODO("Not yet implemented")
+            }
+
+            override fun toViewer(sender: String) {
+//                TODO("Not yet implemented")
+                Log.d("STREAMING_PROTOCALL", "VIEWER_OK")
+//                rtcClient.call(sdpObserver)
+
+            }
+        }
+
+        cmClient.cmEventHandler.stListener = stListener
+//        cmClient.cmEventHandler.
+
         call_video.setOnClickListener { rtcClient.call(sdpObserver) }
-//        rtcClient.call(sdpObserver)
+        var due = CMDummyEvent()
+        due.dummyInfo = "REQUEST_STREAM_TO_STREAMER#"+cmClient.cmClientStub.myself.currentSession
+        cmClient.cmClientStub.send(due, streamerId)
+        rtcClient.call(sdpObserver)
     }
 
     private fun createSignallingClientListener() = object : SignallingClientListener {
@@ -101,6 +148,12 @@ class ViewerActivity : AppCompatActivity() {
     }
 
     private fun init(){
+
+        streamerId = intent.getStringExtra("streamerId")
+        Log.d("v_streamer_id", streamerId)
+        v_streamer_id.text = streamerId
+
+
         chatting.movementMethod = ScrollingMovementMethod()
 
         // Send Message
@@ -113,8 +166,9 @@ class ViewerActivity : AppCompatActivity() {
 
         leave_btn.setOnClickListener {
             cmClient.cmClientStub.leaveSession()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            finish()
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
         }
 //        var matrix = Matrix()
 ////                    matrix.setScale(-1f, 1f)

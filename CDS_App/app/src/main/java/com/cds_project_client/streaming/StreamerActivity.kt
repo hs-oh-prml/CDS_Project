@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -39,6 +41,17 @@ class StreamerActivity : AppCompatActivity() {
             super.onCreateSuccess(p0)
             signallingClient.send(p0)
         }
+
+        override fun onSetFailure(p0: String?) {
+            super.onSetFailure(p0)
+            Log.d("STREAMER_APPSDPOBSERVER_STATUS", "SET FAILED")
+        }
+
+        override fun onCreateFailure(p0: String?) {
+            super.onCreateFailure(p0)
+            Log.d("STREAMER_APPSDPOBSERVER_STATUS", "CREATED FAILED")
+
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +83,22 @@ class StreamerActivity : AppCompatActivity() {
             cmClient.cmClientStub.send(due, "SERVER");
             finish()
         }
+        var stListener = object:CMClientEventHandler.cmStreamingListener{
+            override fun toStreamer(sender:String) {
+//                TODO("Not yet implemented")
+                Log.d("STREAMING_PROTOCALL", "STREAMER_OK")
+                rtcClient.answer(sdpObserver)
+                sdpObserver.onSetSuccess()
+                var due = CMDummyEvent()
+                due.dummyInfo = "REQUEST_STREAM_TO_VIEWER"
+                cmClient.cmClientStub.send(due, sender)
+            }
+
+            override fun toViewer(sender: String) {
+
+            }
+        }
+        cmClient.cmEventHandler.stListener = stListener
     }
 
     override fun onDestroy() {
@@ -83,6 +112,7 @@ class StreamerActivity : AppCompatActivity() {
     }
 
     private fun onCameraPermissionGranted() {
+//        var pubnub = PubNub()
         rtcClient = RTCClient(
             application,
             object : PeerConnectionObserver() {

@@ -26,6 +26,7 @@
         android:padding="16dp"
         android:background="@color/white"
         android:text="STREAMER ID"
+        android:id="@+id/v_streamer_id"
         android:textSize="16sp"
         android:textColor="@color/darkred"
         android:textStyle="bold"

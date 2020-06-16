@@ -134,11 +134,16 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 		 * 정의: 스트리밍 시작 요청 
 		 * Send: 성공하면 가능한 세선 이름, 실패하면 ""을 제공 
 		 * 동작: 
+		 * 
+		 * ===REQUEST_STREAM
+		 * 정의: 스트리머에게 동영상 요청
+		 * Send: x 
 		 */
 		
 		CMDummyEvent due = (CMDummyEvent) cme;
 		String[] req = due.getDummyInfo().split("#");
 		CMDummyEvent sendDue = new CMDummyEvent();
+//		System.out.println("===================== sessionName: "+ due.getHandlerSession());
 		switch(req[0]) {
 		case "STREAMINGSTART":
 			sendDue.setDummyInfo("RESPONSE_STREAMER_START" + "#" + m_sessionStub.getPossibleSession(req[1]));

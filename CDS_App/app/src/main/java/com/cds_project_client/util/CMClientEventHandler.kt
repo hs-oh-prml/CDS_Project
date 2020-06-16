@@ -33,8 +33,14 @@ class CMClientEventHandler(
     interface cmRegisterListener{
         fun registerUser(ret:Int)
     }
-    interface datagramListener{
-        fun streaming(bytes:ByteArray)
+    interface cmStreamingListener{
+        fun toStreamer(sender:String)
+        fun toViewer(sender:String)
+
+    }
+    interface cmSessListener{
+        fun sessionRefresh(cmSessions: ArrayList<String>)
+
     }
     interface cmSessListener{
         fun sessionRefresh(sessionNums:ArrayList<String>)
@@ -73,6 +79,15 @@ class CMClientEventHandler(
                     Log.d("STREAMERID", streamers[i])
                     if(streamers[i] != ".") cmSessions.add(ItemStreaming(streamers[i], sessionNums[i]))
                 }
+
+                Log.d("EVENTHANDLER_STREAMER_INFO", sessionNums.toString())
+                sListener?.sessionRefresh(sessionNums)
+            }
+            "REQUEST_STREAM_TO_STREAMER"->{
+                stListener.toStreamer(due.sender)
+            }
+            "REQUEST_STREAM_TO_VIEWER"->{
+                stListener.toViewer(due.sender)
             }
         }
     }

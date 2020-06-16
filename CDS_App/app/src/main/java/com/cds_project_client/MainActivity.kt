@@ -17,7 +17,7 @@ import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 class MainActivity : AppCompatActivity() {
 
     lateinit var cmClient: CMClient
-
+    lateinit var adapter:StreamerListAdapter
     lateinit var u_id:String
     lateinit var u_pw:String
     lateinit var adapter: StreamerListAdapter
@@ -58,10 +58,7 @@ class MainActivity : AppCompatActivity() {
             val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGSTART"+"#"+cmClient.cmClientStub.myself.name
             cmClient.cmClientStub.send(due, "SERVER");
-
             val intent = Intent(this, StreamerActivity::class.java)
-            cmClient.cmClientStub.joinSession("session2")
-//            cmClient.cmClientStub.cha
             startActivity(intent)
         }
 

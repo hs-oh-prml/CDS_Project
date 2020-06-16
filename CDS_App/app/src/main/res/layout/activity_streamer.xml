@@ -7,13 +7,11 @@
     tools:context=".streaming.StreamerActivity"
     android:orientation="vertical"
     >
-    <Button
-        android:layout_margin="10dp"
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/local_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/call_btn"
-        android:text="Start Streaming"
-        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,9 +19,17 @@
         android:orientation="horizontal"
         android:padding="15dp"
         android:background="@color/white"
+        android:layout_alignParentTop="true"
         >
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/call_btn"
+            android:text="Start Streaming"
+            />
+
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="16dp"
@@ -42,12 +48,6 @@
             android:layout_weight="1"
             />
     </LinearLayout>
-    <org.webrtc.SurfaceViewRenderer
-        android:id="@+id/local_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        />
     <TextView
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
