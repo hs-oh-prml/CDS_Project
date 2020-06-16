@@ -92,7 +92,6 @@ class RTCClient(
         localStream.addTrack(localVideoTrack)
         peerConnection?.addStream(localStream)
     }
-
     private fun PeerConnection.call(sdpObserver: SdpObserver) {
         val constraints = MediaConstraints().apply {
             mandatory.add(MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"))

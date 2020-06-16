@@ -10,13 +10,14 @@ import com.cds_project_client.data.ItemStreaming
 import com.cds_project_client.login.LoginActivity
 import com.cds_project_client.streaming.StreamerActivity
 import com.cds_project_client.util.CMClient
+import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_main.*
 import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var cmClient: CMClient
-
+    lateinit var adapter:StreamerListAdapter
     lateinit var u_id:String
     lateinit var u_pw:String
 
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private fun init(){
 
         val layoutManager = LinearLayoutManager(this, VERTICAL, false)
-        val adapter = StreamerListAdapter(this, cmClient.cmSessions, cmClient)
+        adapter = StreamerListAdapter(this, cmClient.cmSessions, cmClient)
         recycler_view.layoutManager = layoutManager
         recycler_view.adapter = adapter
 
@@ -39,10 +40,7 @@ class MainActivity : AppCompatActivity() {
             val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGSTART"+"#"+cmClient.cmClientStub.myself.name
             cmClient.cmClientStub.send(due, "SERVER");
-
             val intent = Intent(this, StreamerActivity::class.java)
-            cmClient.cmClientStub.joinSession("session2")
-//            cmClient.cmClientStub.cha
             startActivity(intent)
 
         }
@@ -60,6 +58,16 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+
+        val sListener = object : CMClientEventHandler.cmSessListener {
+            override fun sessionRefresh(cmSessions: ArrayList<String>) {
+//                TODO("Not yet implemented")
+                runOnUiThread{
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+        cmClient.cmEventHandler.sListener = sListener
     }
 
     fun initCM(){

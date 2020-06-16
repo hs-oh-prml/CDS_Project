@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -13,6 +15,7 @@ import com.cds_project_client.mApplication
 import com.cds_project_client.util.CMClient
 import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_streamer.*
+import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
 import org.webrtc.SessionDescription
@@ -33,6 +36,17 @@ class StreamerActivity : AppCompatActivity() {
         override fun onCreateSuccess(p0: SessionDescription?) {
             super.onCreateSuccess(p0)
             signallingClient.send(p0)
+        }
+
+        override fun onSetFailure(p0: String?) {
+            super.onSetFailure(p0)
+            Log.d("STREAMER_APPSDPOBSERVER_STATUS", "SET FAILED")
+        }
+
+        override fun onCreateFailure(p0: String?) {
+            super.onCreateFailure(p0)
+            Log.d("STREAMER_APPSDPOBSERVER_STATUS", "CREATED FAILED")
+
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,10 +71,34 @@ class StreamerActivity : AppCompatActivity() {
 //        rtcClient.call(sdpObserver)
 
         onCameraPermissionGranted()
+        streamer_leave_btn.setOnClickListener {
+            val due = CMDummyEvent()
+            due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+            cmClient.cmClientStub.send(due, "SERVER");
+            finish()
+        }
+
+        var stListener = object:CMClientEventHandler.cmStreamingListener{
+            override fun toStreamer(sender:String) {
+//                TODO("Not yet implemented")
+                Log.d("STREAMING_PROTOCALL", "STREAMER_OK")
+                rtcClient.answer(sdpObserver)
+                sdpObserver.onSetSuccess()
+                var due = CMDummyEvent()
+                due.dummyInfo = "REQUEST_STREAM_TO_VIEWER"
+                cmClient.cmClientStub.send(due, sender)
+            }
+
+            override fun toViewer(sender: String) {
+
+            }
+        }
+        cmClient.cmEventHandler.stListener = stListener
     }
 
 
     private fun onCameraPermissionGranted() {
+//        var pubnub = PubNub()
         rtcClient = RTCClient(
             application,
             object : PeerConnectionObserver() {

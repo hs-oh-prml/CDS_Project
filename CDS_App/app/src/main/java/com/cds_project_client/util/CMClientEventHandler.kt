@@ -16,6 +16,9 @@ class CMClientEventHandler(
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
+    lateinit var stListener:cmStreamingListener
+
+    var sListener:cmSessListener? = null
     var sessionNums: ArrayList<String>
 
     init{
@@ -31,8 +34,14 @@ class CMClientEventHandler(
     interface cmRegisterListener{
         fun registerUser(ret:Int)
     }
-    interface datagramListener{
-        fun streaming(bytes:ByteArray)
+    interface cmStreamingListener{
+        fun toStreamer(sender:String)
+        fun toViewer(sender:String)
+
+    }
+    interface cmSessListener{
+        fun sessionRefresh(cmSessions: ArrayList<String>)
+
     }
     override fun processEvent(p0: CMEvent?) {
 //        TODO("Not yet implemented")
@@ -67,6 +76,15 @@ class CMClientEventHandler(
                     Log.d("STREAMERID", streamers[i])
                     if(streamers[i] != ".") cmSessions.add(ItemStreaming(streamers[i], sessionNums[i]))
                 }
+
+                Log.d("EVENTHANDLER_STREAMER_INFO", sessionNums.toString())
+                sListener?.sessionRefresh(sessionNums)
+            }
+            "REQUEST_STREAM_TO_STREAMER"->{
+                stListener.toStreamer(due.sender)
+            }
+            "REQUEST_STREAM_TO_VIEWER"->{
+                stListener.toViewer(due.sender)
             }
         }
     }
