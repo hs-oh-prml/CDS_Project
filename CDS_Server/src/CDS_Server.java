@@ -21,6 +21,7 @@ import kr.ac.konkuk.ccslab.cm.stub.CMServerStub;
 
 public class CDS_Server {
 	private CMServerStub m_serverStub;
+	private CMServerSessionStub m_sessionStub;
 	private CDS_ServerEventHandler m_eventHandler;
 	private boolean m_bRun;
 	private CMSNSUserAccessSimulator m_uaSim;
@@ -29,7 +30,8 @@ public class CDS_Server {
 	public CDS_Server()
 	{
 		m_serverStub = new CMServerStub();
-		m_eventHandler = new CDS_ServerEventHandler(m_serverStub);
+		m_sessionStub = new CMServerSessionStub();
+		m_eventHandler = new CDS_ServerEventHandler(m_serverStub, m_sessionStub);
 		m_bRun = true;
 		m_uaSim = new CMSNSUserAccessSimulator();
 	}
@@ -98,7 +100,81 @@ public class CDS_Server {
 			System.err.println("CM initialization error!");
 			return;
 		}
-//		startTest();
+		startTest();
+	}
+	
+	public void startTest()
+	{
+		System.out.println("Server application starts.");
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		m_scan = new Scanner(System.in);
+		String strInput = null;
+		int nCommand = -1;
+		while(m_bRun)
+		{
+			System.out.println("Type \"0\" for menu.");
+			System.out.print("> ");
+			try {
+				strInput = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				continue;
+			}
+			
+			try {
+				nCommand = Integer.parseInt(strInput);
+			} catch (NumberFormatException e) {
+				System.out.println("Incorrect command number!");
+				continue;
+			}
+			
+			switch(nCommand)
+			{
+			case 0:
+				printAllMenus();
+				break;
+			case 100:
+				startCM();
+				break;
+			case 999:
+				terminateCM();
+				return;
+			case 1: // print session information
+				printSessionInfo();
+				break;
+			case 5:	// print current channels information
+				printCurrentChannelInfo();
+				break;
+			case 6: // print current login users
+				printLoginUsers();
+				break;
+			default:
+				System.err.println("Unknown command.");
+				break;
+			}
+		}
+		
+		try {
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		m_scan.close();
+		
+	}
+	
+	public void printAllMenus()
+	{
+		System.out.print("---------------------------------- Help\n");
+		System.out.print("0: show all menus\n");
+		System.out.print("---------------------------------- Start/Stop\n");
+		System.out.print("100: strat CM, 999: terminate CM\n");
+		System.out.print("---------------------------------- Information\n");
+		System.out.print("1: show session information\n");
+		System.out.print("5: show current channels, 6: show login users\n");
 	}
 	
 	public void terminateCM()
@@ -124,453 +200,6 @@ public class CDS_Server {
 		return;
 	}
 	
-	// 질문: 그룹은 프린트 할 일 없을 것 같은데 지울까요?
-	public void printGroupInfo()
-	{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String strSessionName = null;
-		
-		System.out.println("====== print group information");
-		System.out.print("Session name: ");
-		try {
-			strSessionName = br.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		CMInteractionInfo interInfo = m_serverStub.getCMInfo().getInteractionInfo();
-		CMSession session = interInfo.findSession(strSessionName);
-		if(session == null)
-		{
-			System.out.println("Session("+strSessionName+") not found.");
-			return;
-		}
-		
-		System.out.println("------------------------------------------------------------------");
-		System.out.format("%-20s%-20s%-10s%-10s%n", "group name", "multicast addr", "port", "#users");
-		System.out.println("------------------------------------------------------------------");
-
-		Iterator<CMGroup> iter = session.getGroupList().iterator();
-		while(iter.hasNext())
-		{
-			CMGroup gInfo = iter.next();
-			System.out.format("%-20s%-20s%-10d%-10d%n", gInfo.getGroupName(), gInfo.getGroupAddress()
-					, gInfo.getGroupPort(), gInfo.getGroupUsers().getMemberNum());
-		}
-
-		System.out.println("======");
-		return;
-	}
-
-	public void addChannel()
-	{
-		int nChType = -1;
-		int nChKey = -1;
-		String strServerName = null;
-		String strChAddress = null;
-		int nChPort = -1;
-		String strSessionName = null;
-		String strGroupName = null;
-		CMConfigurationInfo confInfo = m_serverStub.getCMInfo().getConfigurationInfo();
-		CMInteractionInfo interInfo = m_serverStub.getCMInfo().getInteractionInfo();
-		boolean bResult = false;
-		String strBlock = null;
-		boolean isBlock = false;
-		SocketChannel sc = null;
-		DatagramChannel dc = null;
-		String strSync = null;
-		boolean isSyncCall = false;
-		
-		System.out.println("====== add additional channel");
-
-		// ask channel type, (server name), channel index (integer greater than 0), addr, port
-		try{
-			//System.out.print("Select channel type (SocketChannel:2, DatagramChannel:3, MulticastChannel:4): ");
-			System.out.print("Select channel type (DatagramChannel:3, MulticastChannel:4): ");
-			nChType = m_scan.nextInt();
-			if(nChType == CMInfo.CM_SOCKET_CHANNEL)
-			{
-				System.err.println("socket channel not yet supported!");
-				return;
-				/*
-				System.out.print("is it a blocking channel? (\"y\": yes, \"n\": no): ");
-				strBlock = m_scan.next();
-				if(strBlock.equals("y")) isBlock = true;
-				else if(strBlock.equals("n")) isBlock = false;
-				else
-				{
-					System.err.println("invalid answer! : "+strBlock);
-					return;
-				}
-			
-				if(isBlock)
-				{
-					System.out.print("Channel key(>=0): ");
-					nChKey = m_scan.nextInt();
-					if(nChKey < 0)
-					{
-						System.err.println("testAddChannel(), invalid blocking socket channel key ("+nChKey+")!");
-						return;
-					}
-				}
-				else
-				{
-					System.out.print("Channel key(integer greater than 0): ");
-					nChKey = m_scan.nextInt();
-					if(nChKey <= 0)
-					{
-						System.err.println("testAddChannel(), invalid nonblocking socket channel key ("+nChKey+")!");
-						return;
-					}
-				}
-				
-				System.out.print("Is the addition synchronous? (\"y\": yes, \"n\": no): ");
-				strSync = m_scan.next();
-				if(strSync.equals("y")) isSyncCall = true;
-				else if(strSync.equals("n")) isSyncCall =false;
-				else
-				{
-					System.err.println("invalid answer! :" + strSync);
-					return;
-				}
-				
-				System.out.print("Server name(\"SERVER\" for the default server): ");
-				strServerName = m_scan.next();
-				*/
-			}
-			else if(nChType == CMInfo.CM_DATAGRAM_CHANNEL)
-			{
-				System.out.print("is it a blocking channel? (\"y\": yes, \"n\": no): ");
-				strBlock = m_scan.next();
-				if(strBlock.equals("y")) isBlock = true;
-				else if(strBlock.equals("n")) isBlock = false;
-				else
-				{
-					System.err.println("invalid answer! : "+strBlock);
-					return;
-				}
-			
-				if(isBlock)
-				{
-					System.out.print("Channel udp port: ");
-					nChPort = m_scan.nextInt();
-					if(nChPort < 0)
-					{
-						System.err.println("testAddChannel(), invalid blocking datagram channel key ("+nChPort+")!");
-						return;
-					}
-				}
-				else
-				{
-					System.out.print("Channel udp port: ");
-					nChPort = m_scan.nextInt();
-					if(nChPort <= 0)
-					{
-						System.err.println("testAddChannel(), invalid nonblocking datagram channel key ("+nChPort+")!");
-						return;
-					}
-				}
-
-			}
-			else if(nChType == CMInfo.CM_MULTICAST_CHANNEL)
-			{
-				System.out.print("Target session name: ");
-				strSessionName = m_scan.next();
-				System.out.print("Target group name: ");
-				strGroupName = m_scan.next();
-				System.out.print("Channel multicast address: ");
-				strChAddress = m_scan.next();
-				System.out.print("Channel multicast port: ");
-				nChPort = m_scan.nextInt();
-			}
-		}catch(InputMismatchException e){
-			System.err.println("Invalid input type!");
-			m_scan.next();
-			return;
-		}
-					
-		switch(nChType)
-		{
-		/*
-		case CMInfo.CM_SOCKET_CHANNEL:
-			if(isBlock)
-			{
-				if(isSyncCall)
-				{
-					sc = m_clientStub.syncAddBlockSocketChannel(nChKey, strServerName);
-					if(sc != null)
-						System.out.println("Successfully added a blocking socket channel both "
-								+ "at the client and the server: key("+nChKey+"), server("+strServerName+")");
-					else
-						System.err.println("Failed to add a blocking socket channel both at "
-								+ "the client and the server: key("+nChKey+"), server("+strServerName+")");					
-				}
-				else
-				{
-					bResult = m_clientStub.addBlockSocketChannel(nChKey, strServerName);
-					if(bResult)
-						System.out.println("Successfully added a blocking socket channel at the client and "
-								+"requested to add the channel info to the server: key("+nChKey+"), server("
-								+strServerName+")");
-					else
-						System.err.println("Failed to add a blocking socket channel at the client or "
-								+"failed to request to add the channel info to the server: key("+nChKey
-								+"), server("+strServerName+")");
-					
-				}
-			}
-			else
-			{
-				if(isSyncCall)
-				{
-					sc = m_clientStub.syncAddNonBlockSocketChannel(nChKey, strServerName);
-					if(sc != null)
-						System.out.println("Successfully added a nonblocking socket channel both at the client "
-								+ "and the server: key("+nChKey+"), server("+strServerName+")");
-					else
-						System.err.println("Failed to add a nonblocking socket channel both at the client "
-								+ "and the server: key("+nChKey+"), server("+strServerName+")");										
-				}
-				else
-				{
-					bResult = m_clientStub.addNonBlockSocketChannel(nChKey, strServerName);
-					if(bResult)
-						System.out.println("Successfully added a nonblocking socket channel at the client and "
-								+ "requested to add the channel info to the server: key("+nChKey+"), server("
-								+strServerName+")");
-					else
-						System.err.println("Failed to add a nonblocking socket channel at the client or "
-								+ "failed to request to add the channel info to the server: key("+nChKey
-								+"), server("+strServerName+")");					
-				}
-			}
-				
-			break;
-		*/
-		case CMInfo.CM_DATAGRAM_CHANNEL:
-			if(isBlock)
-			{
-				dc = m_serverStub.addBlockDatagramChannel(nChPort);
-				if(dc != null)
-					System.out.println("Successfully added a blocking datagram socket channel: port("+nChPort+")");
-				else
-					System.err.println("Failed to add a blocking datagram socket channel: port("+nChPort+")");								
-			}
-			else
-			{
-				dc = m_serverStub.addNonBlockDatagramChannel(nChPort);
-				if(dc != null)
-					System.out.println("Successfully added a non-blocking datagram socket channel: port("+nChPort+")");
-				else
-					System.err.println("Failed to add a non-blocking datagram socket channel: port("+nChPort+")");				
-			}
-			
-			break;
-		case CMInfo.CM_MULTICAST_CHANNEL:
-			bResult = m_serverStub.addMulticastChannel(strSessionName, strGroupName, strChAddress, nChPort);
-			if(bResult)
-			{
-				System.out.println("Successfully added a multicast channel: session("+strSessionName+"), group("
-						+strGroupName+"), address("+strChAddress+"), port("+nChPort+")");
-			}
-			else
-			{
-				System.err.println("Failed to add a multicast channel: session("+strSessionName+"), group("
-						+strGroupName+"), address("+strChAddress+"), port("+nChPort+")");
-			}
-			break;
-		default:
-			System.out.println("Channel type is incorrect!");
-			break;
-		}
-		
-		System.out.println("======");
-	}
-	
-	public void removeChannel()
-	{
-		int nChType = -1;
-		int nChKey = -1;
-		int nChPort = -1;
-		String strChAddress = null;
-		String strServerName = null;
-		String strSessionName = null;
-		String strGroupName = null;
-		CMConfigurationInfo confInfo = m_serverStub.getCMInfo().getConfigurationInfo();
-		CMInteractionInfo interInfo = m_serverStub.getCMInfo().getInteractionInfo();
-		boolean result = false;
-		String strBlock = null;
-		boolean isBlock = false;
-		String strSync = null;
-		boolean isSyncCall = false;
-		
-		System.out.println("====== remove additional channel");
-		try{
-			//System.out.print("Select channel type (SocketChannel:2, DatagramChannel:3, MulticastChannel:4): ");
-			System.out.print("Select channel type (DatagramChannel:3, MulticastChannel:4): ");
-			nChType = m_scan.nextInt();
-			if(nChType == CMInfo.CM_SOCKET_CHANNEL)
-			{
-				System.err.println("socket channel not yet supported!");
-				return;
-				/*
-				System.out.print("is it a blocking channel? (\"y\": yes, \"n\": no): ");
-				strBlock = m_scan.next();
-				if(strBlock.equals("y")) isBlock = true;
-				else if(strBlock.equals("n")) isBlock = false;
-				else
-				{
-					System.err.println("invalid answer! : "+strBlock);
-					return;
-				}
-			
-				if(isBlock)
-				{
-					System.out.print("Channel key(>=0): ");
-					nChKey = m_scan.nextInt();
-					if(nChKey < 0)
-					{
-						System.err.println("testRemoveChannel(), invalid socket channel key ("+nChKey+")!");
-						return;
-					}
-					System.out.print("Is the removal synchronous? (\"y\": yes, \"n\": no); ");
-					strSync = m_scan.next();
-					if(strSync.equals("y")) isSyncCall = true;
-					else if(strSync.equals("n")) isSyncCall = false;
-					else
-					{
-						System.err.println("Invalid answer! : "+strSync);
-						return;
-					}
-				}
-				else
-				{
-					System.out.print("Channel key(integer greater than 0): ");
-					nChKey = m_scan.nextInt();
-					if(nChKey <= 0)
-					{
-						System.err.println("testRemoveChannel(), invalid socket channel key ("+nChKey+")!");
-						return;
-					}
-				}
-				System.out.print("Server name(\"SERVER\" for the default server): ");
-				strServerName = m_scan.next();
-				*/
-			}
-			else if(nChType ==CMInfo.CM_DATAGRAM_CHANNEL)
-			{
-				System.out.print("is it a blocking channel? (\"y\": yes, \"n\": no): ");
-				strBlock = m_scan.next();
-				if(strBlock.equals("y")) isBlock = true;
-				else if(strBlock.equals("n")) isBlock = false;
-				else
-				{
-					System.err.println("invalid answer! : "+strBlock);
-					return;
-				}
-
-				System.out.print("Channel udp port: ");
-				nChPort = m_scan.nextInt();			
-			}
-			else if(nChType == CMInfo.CM_MULTICAST_CHANNEL)
-			{
-				System.out.print("Target session name: ");
-				strSessionName = m_scan.next();
-				System.out.print("Target group name: ");
-				strGroupName = m_scan.next();
-				System.out.print("Multicast address: ");
-				strChAddress = m_scan.next();
-				System.out.print("Multicast port: ");
-				nChPort = m_scan.nextInt();
-			}
-		}catch(InputMismatchException e){
-			System.err.println("Invalid input type!");
-			m_scan.next();
-			return;
-		}
-
-		switch(nChType)
-		{
-		/*
-		case CMInfo.CM_SOCKET_CHANNEL:
-			if(isBlock)
-			{
-				if(isSyncCall)
-				{
-					result = m_clientStub.syncRemoveBlockSocketChannel(nChKey, strServerName);
-					if(result)
-						System.out.println("Successfully removed a blocking socket channel both "
-								+ "at the client and the server: key("+nChKey+"), server ("+strServerName+")");
-					else
-						System.err.println("Failed to remove a blocking socket channel both at the client "
-								+ "and the server: key("+nChKey+"), server ("+strServerName+")");					
-				}
-				else
-				{
-					result = m_clientStub.removeBlockSocketChannel(nChKey, strServerName);
-					if(result)
-						System.out.println("Successfully removed a blocking socket channel at the client and " 
-								+ "requested to remove it at the server: key("+nChKey+"), server("+strServerName+")");
-					else
-						System.err.println("Failed to remove a blocking socket channel at the client or "
-								+ "failed to request to remove it at the server: key("+nChKey+"), server("
-								+strServerName+")");
-				}
-			}
-			else
-			{
-				result = m_clientStub.removeNonBlockSocketChannel(nChKey, strServerName);
-				if(result)
-					System.out.println("Successfully removed a nonblocking socket channel: key("+nChKey
-							+"), server("+strServerName+")");
-				else
-					System.err.println("Failed to remove a nonblocing socket channel: key("+nChKey
-							+"), server("+strServerName+")");
-			}
-			
-			break;
-		*/
-		case CMInfo.CM_DATAGRAM_CHANNEL:
-			if(isBlock)
-			{
-				result = m_serverStub.removeBlockDatagramChannel(nChPort);
-				if(result)
-					System.out.println("Successfully removed a blocking datagram socket channel: port("+nChPort+")");
-				else
-					System.err.println("Failed to remove a blocking datagram socket channel: port("+nChPort+")");				
-			}
-			else
-			{
-				result = m_serverStub.removeNonBlockDatagramChannel(nChPort);
-				if(result)
-					System.out.println("Successfully removed a non-blocking datagram socket channel: port("+nChPort+")");
-				else
-					System.err.println("Failed to remove a non-blocking datagram socket channel: port("+nChPort+")");				
-			}
-
-			break;
-		case CMInfo.CM_MULTICAST_CHANNEL:
-			result = m_serverStub.removeAdditionalMulticastChannel(strSessionName, strGroupName, strChAddress, nChPort);
-			if(result)
-			{
-				System.out.println("Successfully removed a multicast channel: session("+strSessionName+"), group("
-						+strGroupName+"), address("+strChAddress+"), port("+nChPort+")");
-			}
-			else
-			{
-				System.err.println("Failed to remove a multicast channel: session("+strSessionName+"), group("
-						+strGroupName+"), address("+strChAddress+"), port("+nChPort+")");
-			}
-			break;
-		default:
-			System.out.println("Channel type is incorrect!");
-			break;
-		}
-		
-		System.out.println("======");		
-	}
-
 	public void printCurrentChannelInfo()
 	{
 		System.out.println("========== print current channel info");

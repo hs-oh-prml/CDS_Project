@@ -12,6 +12,33 @@
         android:layout_height="wrap_content"
         android:id="@+id/call_video"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:background="@color/white"
+        >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="@color/white"
+        android:text="STREAMER ID"
+        android:textSize="16sp"
+        android:textColor="@color/darkred"
+        android:textStyle="bold"
+        android:layout_weight="1" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/leave_btn"
+        android:src="@drawable/logout2"
+        android:layout_gravity="right"
+        android:layout_weight="1"
+        />
+    </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,12 +75,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:padding = "5px"
                 >
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/input_chatting"
                     android:hint="Input Message"
+                    android:background="@null"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     />
                 <Button
