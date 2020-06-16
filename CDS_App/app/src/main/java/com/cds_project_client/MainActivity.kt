@@ -41,7 +41,10 @@ class MainActivity : AppCompatActivity() {
             cmClient.cmClientStub.send(due, "SERVER");
 
             val intent = Intent(this, StreamerActivity::class.java)
+            cmClient.cmClientStub.joinSession("session2")
+//            cmClient.cmClientStub.cha
             startActivity(intent)
+
         }
  
         logout_btn.setOnClickListener {
