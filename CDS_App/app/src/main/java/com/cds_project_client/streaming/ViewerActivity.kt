@@ -1,6 +1,7 @@
 package com.cds_project_client.streaming
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import androidx.appcompat.app.AppCompatActivity
