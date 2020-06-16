@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,22 +8,55 @@
     android:orientation="vertical"
     >
     <Button
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/call_btn"
         android:text="Start Streaming"
-        android:id="@+id/streaming_btn"
-        android:visibility="gone"
+        android:layout_alignParentTop="true"
         />
-    <TextureView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:background="@color/white"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:background="@color/white"
+            android:text="STREAMER ID"
+            android:textSize="16sp"
+            android:textColor="@color/darkred"
+            android:textStyle="bold"
+            android:layout_weight="1" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/logout_btn"
+            android:src="@drawable/logout2"
+            android:layout_gravity="right"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/local_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/video_view"
         android:layout_weight="1"
         />
-    <TextureView
+    <TextView
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/captured_view"
+        android:layout_height="200dp"
+        android:id="@+id/s_chatting"
+        android:background="#B3FFFFFF"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:gravity="bottom"
         android:layout_weight="1"
         />
-</LinearLayout>
+</RelativeLayout>
