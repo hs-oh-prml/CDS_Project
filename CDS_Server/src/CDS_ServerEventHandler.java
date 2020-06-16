@@ -80,6 +80,7 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 			String req = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
 			CMDummyEvent sendDue = new CMDummyEvent();
 			sendDue.setDummyInfo(req);
+//			m_serverStub.broadcast(sendDue);
 			m_serverStub.send(sendDue, se.getUserName());
 			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
 			break;
@@ -144,6 +145,12 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 			m_serverStub.send(sendDue, req[1]);
 			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
 			due = null;
+			
+			String req2 = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
+			sendDue = new CMDummyEvent();
+			sendDue.setDummyInfo(req2);
+			m_serverStub.broadcast(sendDue);
+			
 			break;
 		case "STREAMINGEND":
 			String sessionName = m_sessionStub.leaveSession(req[1]);
@@ -152,6 +159,12 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 			if(sessionName != "") m_serverStub.multicast(sendDue, sessionName, null);
 			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
 			due = null;
+			
+			String req3 = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
+			sendDue = new CMDummyEvent();
+			sendDue.setDummyInfo(req3);
+			m_serverStub.broadcast(sendDue);
+			
 			break;
 		default:
 			break;
