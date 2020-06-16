@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, StreamerActivity::class.java)
             startActivity(intent)
         }
-
+ 
         logout_btn.setOnClickListener {
             var bRequestResult = false
             println("====== logout from default server")
