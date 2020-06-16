@@ -76,6 +76,13 @@ class StreamerActivity : AppCompatActivity() {
 
         onCameraPermissionGranted()
 
+        var eListener = object:CMClientEventHandler.cmEndStreamListener{
+            override fun endSession() {
+//                TODO("Not yet implemented")
+                finish()
+            }
+        }
+        cmClient.cmEventHandler.eListener = eListener
         streamer_leave_btn.setOnClickListener {
             val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name

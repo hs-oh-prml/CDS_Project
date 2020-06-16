@@ -17,6 +17,8 @@ class CMClientEventHandler(
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
     lateinit var stListener:cmStreamingListener
+    lateinit var eListener:cmEndStreamListener
+
     var sListener:cmSessListener? = null
 
 
@@ -42,7 +44,9 @@ class CMClientEventHandler(
     }
     interface cmSessListener{
         fun sessionRefresh(cmSessions: ArrayList<String>)
-
+    }
+    interface cmEndStreamListener{
+        fun endSession()
     }
 
     override fun processEvent(p0: CMEvent?) {
@@ -70,6 +74,7 @@ class CMClientEventHandler(
             }
             "RESPONSE_STREAMER_END"->{
                 clientStub.leaveSession()
+                eListener.endSession()
                 Log.d("RES_S_END", "sessionEND")
             }
             "RESPONSE_STREAMER_ID"->{

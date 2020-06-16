@@ -64,6 +64,14 @@ class ViewerActivity : AppCompatActivity() {
             }
         }
         cmClient.cmEventHandler.cListener = listener
+
+        var eListener = object:CMClientEventHandler.cmEndStreamListener{
+            override fun endSession() {
+//                TODO("Not yet implemented")
+                finish()
+            }
+        }
+        cmClient.cmEventHandler.eListener = eListener
         init()
         initVideo()
 //        var handler = Handler()
