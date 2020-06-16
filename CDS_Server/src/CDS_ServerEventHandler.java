@@ -156,8 +156,8 @@ public class CDS_ServerEventHandler implements CMAppEventHandler{
 			String sessionName = m_sessionStub.leaveSession(req[1]);
 			sendDue.setDummyInfo("RESPONSE_STREAMER_END" + "#" + "1");
 			System.out.println(sessionName);
-			if(sessionName != "") m_serverStub.multicast(sendDue, due.getHandlerSession(), null);
-			System.out.println("보낸 메세지: "+sendDue.getDummyInfo());
+			System.out.println("보낸 메세지: "+sendDue.getDummyInfo()+", "+ due.getHandlerSession());
+			if(sessionName != "") m_serverStub.cast(sendDue, due.getHandlerSession(), null);
 			due = null;
 			
 			String req3 = "RESPONSE_STREAMER_ID" + "#" + m_sessionStub.getStreamerID();
