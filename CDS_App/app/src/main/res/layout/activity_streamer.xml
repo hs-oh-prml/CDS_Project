@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,11 +8,12 @@
     android:orientation="vertical"
     >
     <Button
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/call_btn"
         android:text="Start Streaming"
-        android:id="@+id/streaming_btn"
-        android:visibility="gone"
+        android:layout_alignParentTop="true"
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,78 +42,21 @@
             android:layout_weight="1"
             />
     </LinearLayout>
-    <TextureView
+    <org.webrtc.SurfaceViewRenderer
+        android:id="@+id/local_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/video_view"
         android:layout_weight="1"
         />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="15dp"
-        android:background="@color/white"
-        >
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="15dp"
-            android:background="@color/white"
-            >
-
-            <TextureView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/captured_view"
-                android:layout_weight="1"
-                />
-        </LinearLayout>
-    </LinearLayout>
-
-    <RelativeLayout
+    <TextView
+        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
+        android:id="@+id/s_chatting"
+        android:background="#B3FFFFFF"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:gravity="bottom"
         android:layout_weight="1"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/s_chatting"
-                android:background="@android:color/transparent"
-                android:inputType="textMultiLine"
-                android:scrollbars="vertical"
-                android:gravity="bottom"
-                android:layout_weight="1"
-                />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding = "5px"
-                >
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/s_input_chatting"
-                    android:hint="Input Message"
-                    android:background="@null"
-                    android:layout_marginLeft="10dp"
-                    android:layout_weight="1"
-                    />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/s_send_message"
-                    android:text="send"
-                    />
-            </LinearLayout>
-        </LinearLayout>
-    </RelativeLayout>
-</LinearLayout>
+        />
+</RelativeLayout>

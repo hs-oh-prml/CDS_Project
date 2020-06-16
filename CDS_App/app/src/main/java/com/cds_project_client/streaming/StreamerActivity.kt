@@ -268,9 +268,9 @@ class StreamerActivity : AppCompatActivity() {
     }
 
     fun closeCamera(){
-    if(null != cameraDevice){
-        cameraDevice!!.close()
-        cameraDevice = null
+        if(null != cameraDevice){
+            cameraDevice!!.close()
+            cameraDevice = null
         }
     }
 
@@ -279,23 +279,23 @@ class StreamerActivity : AppCompatActivity() {
         if(permissionCheck != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(this, "권한 승인이 필요합니다.", Toast.LENGTH_SHORT).show()
             if(ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    Manifest.permission.CAMERA
-                )){
+                            this,
+                            Manifest.permission.CAMERA
+                    )){
                 Toast.makeText(this, "스트리밍을 위해 카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "스트리밍을 위해 카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
 
                 ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.CAMERA), 100);
+                        arrayOf(Manifest.permission.CAMERA), 100);
             }
         }
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
     ) {
         when(requestCode){
             100->{

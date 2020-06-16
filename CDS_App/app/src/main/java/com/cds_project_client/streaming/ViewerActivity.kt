@@ -1,13 +1,8 @@
 package com.cds_project_client.streaming
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.MediaPlayer
+import android.Manifest
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.widget.MediaController
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +15,24 @@ import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_streamer.*
 import kotlinx.android.synthetic.main.activity_viewer.*
+import org.webrtc.IceCandidate
+import org.webrtc.MediaStream
+import org.webrtc.SessionDescription
 
 class ViewerActivity : AppCompatActivity() {
 
-    var is_full = false
     lateinit var cmClient: CMClient
+
+    private lateinit var rtcClient: RTCClient
+    private lateinit var signallingClient: SignallingClient
+
+    private val sdpObserver = object : AppSdpObserver() {
+        override fun onCreateSuccess(p0: SessionDescription?) {
+            super.onCreateSuccess(p0)
+            signallingClient.send(p0)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_viewer)
@@ -40,6 +48,50 @@ class ViewerActivity : AppCompatActivity() {
         }
         cmClient.cmEventHandler.cListener = listener
         init()
+        initVideo()
+    }
+
+    fun initVideo(){
+        rtcClient = RTCClient(
+            application,
+            object : PeerConnectionObserver() {
+                override fun onIceCandidate(p0: IceCandidate?) {
+                    super.onIceCandidate(p0)
+//                    signallingClient.send(p0)
+                    rtcClient.addIceCandidate(p0)
+                }
+
+                override fun onAddStream(p0: MediaStream?) {
+                    super.onAddStream(p0)
+                    p0?.videoTracks?.get(0)?.addSink(video_view)
+                }
+            }
+        )
+        rtcClient.initSurfaceView(video_view)
+        signallingClient = SignallingClient(createSignallingClientListener())
+        call_video.setOnClickListener { rtcClient.call(sdpObserver) }
+//        rtcClient.call(sdpObserver)
+    }
+
+    private fun createSignallingClientListener() = object : SignallingClientListener {
+        override fun onConnectionEstablished() {
+//            call_button.isClickable = true
+        }
+
+        override fun onOfferReceived(description: SessionDescription) {
+            rtcClient.onRemoteSessionReceived(description)
+            rtcClient.answer(sdpObserver)
+//            remote_view_loading.isGone = true
+        }
+
+        override fun onAnswerReceived(description: SessionDescription) {
+            rtcClient.onRemoteSessionReceived(description)
+//            remote_view_loading.isGone = true
+        }
+
+        override fun onIceCandidateReceived(iceCandidate: IceCandidate) {
+            rtcClient.addIceCandidate(iceCandidate)
+        }
     }
 
     fun setFullScreen(is_full:Boolean){

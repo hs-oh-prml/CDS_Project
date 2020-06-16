@@ -7,6 +7,11 @@
     tools:context=".streaming.ViewerActivity"
     android:orientation="vertical"
     >
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/call_video"
+        />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,10 +44,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         >
-        <TextureView
+        <org.webrtc.SurfaceViewRenderer
+            android:id="@+id/video_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/streaming_view"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             />
     </RelativeLayout>
     <RelativeLayout
