@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapter:StreamerListAdapter
     lateinit var u_id:String
     lateinit var u_pw:String
-
+    lateinit var adapter: StreamerListAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,10 +28,28 @@ class MainActivity : AppCompatActivity() {
         init()
     }
 
+    override fun onResume() {
+        super.onResume()
+        adapter.notifyDataSetChanged()
+
+    }
+
     private fun init(){
+
+        var sListener = object: CMClientEventHandler.cmSessListener{
+            override fun sessionRefresh(sessionNums: ArrayList<String>) {
+//                TODO("Not yet implemented")
+                runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
 
         val layoutManager = LinearLayoutManager(this, VERTICAL, false)
         adapter = StreamerListAdapter(this, cmClient.cmSessions, cmClient)
+
+        Log.d("SESSION_INFO", cmClient.cmSessions.toString())
+//        adapter.notifyDataSetChanged()
         recycler_view.layoutManager = layoutManager
         recycler_view.adapter = adapter
 
@@ -42,9 +60,8 @@ class MainActivity : AppCompatActivity() {
             cmClient.cmClientStub.send(due, "SERVER");
             val intent = Intent(this, StreamerActivity::class.java)
             startActivity(intent)
-
         }
- 
+
         logout_btn.setOnClickListener {
             var bRequestResult = false
             println("====== logout from default server")
@@ -59,14 +76,6 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        val sListener = object : CMClientEventHandler.cmSessListener {
-            override fun sessionRefresh(cmSessions: ArrayList<String>) {
-//                TODO("Not yet implemented")
-                runOnUiThread{
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        }
         cmClient.cmEventHandler.sListener = sListener
     }
 
@@ -97,6 +106,21 @@ class MainActivity : AppCompatActivity() {
 //        } else {
 //            Log.d("CM Response", "Failed The Session-Join Request!")
 //        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        var bRequestResult = false
+        println("====== logout from default server")
+        bRequestResult = cmClient.cmClientStub.logoutCM()
+        if (bRequestResult)
+            println("successfully sent the logout request.")
+        else
+            System.err.println("failed the logout request!")
+        println("======")
+
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
     }
 
 }

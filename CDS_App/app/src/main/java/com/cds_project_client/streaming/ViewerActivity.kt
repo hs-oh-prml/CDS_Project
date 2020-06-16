@@ -182,4 +182,10 @@ class ViewerActivity : AppCompatActivity() {
 //        getVideo()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cmClient.cmClientStub.leaveSession()
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
 }

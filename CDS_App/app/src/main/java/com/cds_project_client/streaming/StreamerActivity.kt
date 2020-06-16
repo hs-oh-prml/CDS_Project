@@ -1,6 +1,7 @@
 package com.cds_project_client.streaming
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,11 +11,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.cds_project_client.MainActivity
 import com.cds_project_client.R
 import com.cds_project_client.mApplication
 import com.cds_project_client.util.CMClient
 import com.cds_project_client.util.CMClientEventHandler
 import kotlinx.android.synthetic.main.activity_streamer.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kr.ac.konkuk.ccslab.cm.event.CMDummyEvent
 import org.webrtc.IceCandidate
 import org.webrtc.MediaStream
@@ -30,6 +33,7 @@ class StreamerActivity : AppCompatActivity() {
     }
 
     private lateinit var rtcClient: RTCClient
+    @OptIn(ExperimentalCoroutinesApi::class)
     private lateinit var signallingClient: SignallingClient
 
     private val sdpObserver = object : AppSdpObserver() {
@@ -71,13 +75,14 @@ class StreamerActivity : AppCompatActivity() {
 //        rtcClient.call(sdpObserver)
 
         onCameraPermissionGranted()
+
         streamer_leave_btn.setOnClickListener {
-            val due = CMDummyEvent()
+            val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+            due.handlerSession = cmClient.cmClientStub.myself.currentSession
             cmClient.cmClientStub.send(due, "SERVER");
             finish()
         }
-
         var stListener = object:CMClientEventHandler.cmStreamingListener{
             override fun toStreamer(sender:String) {
 //                TODO("Not yet implemented")
@@ -96,6 +101,15 @@ class StreamerActivity : AppCompatActivity() {
         cmClient.cmEventHandler.stListener = stListener
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        val due: CMDummyEvent = CMDummyEvent()
+        due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+        due.handlerSession = cmClient.cmClientStub.myself.currentSession
+
+        cmClient.cmClientStub.send(due, "SERVER");
+        finish()
+    }
 
     private fun onCameraPermissionGranted() {
 //        var pubnub = PubNub()

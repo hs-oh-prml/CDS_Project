@@ -16,9 +16,8 @@ class CMClientEventHandler(
 ): CMAppEventHandler {
     lateinit var cListener:cmChatListener
     lateinit var rListener:cmRegisterListener
-    lateinit var stListener:cmStreamingListener
-
     var sListener:cmSessListener? = null
+
     var sessionNums: ArrayList<String>
 
     init{
@@ -42,6 +41,9 @@ class CMClientEventHandler(
     interface cmSessListener{
         fun sessionRefresh(cmSessions: ArrayList<String>)
 
+    }
+    interface cmSessListener{
+        fun sessionRefresh(sessionNums:ArrayList<String>)
     }
     override fun processEvent(p0: CMEvent?) {
 //        TODO("Not yet implemented")
@@ -68,6 +70,7 @@ class CMClientEventHandler(
             }
             "RESPONSE_STREAMER_END"->{
                 clientStub.leaveSession()
+                Log.d("RES_S_END", "sessionEND")
             }
             "RESPONSE_STREAMER_ID"->{
                 cmSessions.clear()
@@ -150,6 +153,7 @@ class CMClientEventHandler(
                 tInfo.getPort(), tInfo.getUserNum()
             )
             sessionNums[i] = tInfo.getUserNum().toString()
+            sListener?.sessionRefresh(sessionNums)
         }
     }
 
