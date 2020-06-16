@@ -66,6 +66,7 @@ class StreamerActivity : AppCompatActivity() {
         streamer_leave_btn.setOnClickListener {
             val due: CMDummyEvent = CMDummyEvent()
             due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+            due.handlerSession = cmClient.cmClientStub.myself.currentSession
             cmClient.cmClientStub.send(due, "SERVER");
             finish()
         }
@@ -75,6 +76,8 @@ class StreamerActivity : AppCompatActivity() {
         super.onDestroy()
         val due: CMDummyEvent = CMDummyEvent()
         due.dummyInfo = "STREAMINGEND"+"#"+cmClient.cmClientStub.myself.name
+        due.handlerSession = cmClient.cmClientStub.myself.currentSession
+
         cmClient.cmClientStub.send(due, "SERVER");
         finish()
     }
